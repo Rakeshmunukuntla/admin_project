@@ -43,6 +43,20 @@ export default function CreateJob() {
     "Agile",
     "Jira",
     "Leadership",
+    "AEM",
+    "Cloud Services",
+    "REST APIs",
+    "Java Script",
+    "Type Script",
+    "Tailwind CSS",
+    "Microservices",
+    "Selenium",
+    "Test Automation",
+    "Kubernetes",
+    "Docker",
+    "Figma",
+    "Design Systems",
+    "User Research",
   ];
 
   const textOnlyRegex = /^[A-Za-z\s]*$/;
