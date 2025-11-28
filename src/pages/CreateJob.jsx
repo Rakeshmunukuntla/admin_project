@@ -59,7 +59,8 @@ export default function CreateJob() {
     "User Research",
   ];
 
-  const textOnlyRegex = /^[A-Za-z\s]*$/;
+  // const textOnlyRegex = /^[A-Za-z\s]*$/;
+  const textOnlyRegex = /^[A-Za-z\s()\/-]*$/;
 
   // VALIDATION
   const validateForm = () => {
