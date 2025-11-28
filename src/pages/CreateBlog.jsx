@@ -273,7 +273,8 @@ export default function CreateBlog() {
 
   const [errors, setErrors] = useState({});
 
-  const textOnlyRegex = /^[A-Za-z\s]*$/;
+  // const textOnlyRegex = /^[A-Za-z\s]*$/;
+  const textOnlyRegex = /^[A-Za-z\s()\/-]*$/;
 
   const validateForm = () => {
     let newErrors = {};
