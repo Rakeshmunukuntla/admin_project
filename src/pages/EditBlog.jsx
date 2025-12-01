@@ -24,7 +24,8 @@ export default function EditBlog() {
   const [newBanner, setNewBanner] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const textOnlyRegex = /^[A-Za-z\s]*$/;
+  // const textOnlyRegex = /^[A-Za-z\s]*$/;
+  const textOnlyRegex = /^[A-Za-z\s()\/-]*$/;
 
   // Load blog data
   useEffect(() => {

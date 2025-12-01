@@ -60,7 +60,8 @@ export default function EditJob() {
     "User Research",
   ];
 
-  const textOnly = /^[A-Za-z\s]*$/;
+  // const textOnly = /^[A-Za-z\s]*$/;
+  const textOnlyRegex = /^[A-Za-z\s()\/-]*$/;
 
   // Load job
   useEffect(() => {
