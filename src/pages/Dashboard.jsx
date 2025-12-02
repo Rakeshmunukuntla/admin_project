@@ -100,6 +100,29 @@ export default function Dashboard() {
       gradient: "from-orange-500 to-red-500",
       delay: "300",
     },
+    // 🆕 NEW CARD: Manage Job Applications
+    {
+      to: "/job-applications", // make sure you have a route for this
+      icon: (
+        <svg
+          className="w-12 h-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 12h6m-6 4h4M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm3 0V3a1 1 0 011-1h2a1 1 0 011 1v1"
+          />
+        </svg>
+      ),
+      title: "Manage Job Applications",
+      description: "Review and track candidate applications",
+      gradient: "from-teal-500 to-indigo-500",
+      delay: "400",
+    },
   ];
 
   return (
@@ -109,7 +132,6 @@ export default function Dashboard() {
       <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         {/* Animated Background */}
         <div className="absolute inset-0">
-          {/* Animated Gradient Orbs */}
           <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-500 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
           <div
             className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500 rounded-full filter blur-3xl opacity-20 animate-pulse"
@@ -120,7 +142,6 @@ export default function Dashboard() {
             style={{ animationDelay: "4s" }}
           ></div>
 
-          {/* Grid Pattern */}
           <div
             className="absolute inset-0 opacity-5"
             style={{
@@ -130,7 +151,6 @@ export default function Dashboard() {
             }}
           ></div>
 
-          {/* Floating Particles */}
           {[...Array(15)].map((_, i) => (
             <div
               key={i}
@@ -154,7 +174,6 @@ export default function Dashboard() {
                 : "opacity-0 translate-y-10"
             }`}
           >
-            {/* Header Section */}
             <div className="text-center mb-12">
               <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-4 animate-gradient">
                 Admin Dashboard
@@ -162,22 +181,6 @@ export default function Dashboard() {
               <p className="text-xl text-gray-300">
                 Welcome back! Manage your content with ease.
               </p>
-
-              {/* Stats Bar */}
-              {/* <div className="mt-8 flex justify-center gap-8 flex-wrap">
-                <div className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 border border-white/20">
-                  <span className="text-3xl font-bold text-white">24</span>
-                  <p className="text-gray-300 text-sm">Total Blogs</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 border border-white/20">
-                  <span className="text-3xl font-bold text-white">12</span>
-                  <p className="text-gray-300 text-sm">Active Jobs</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 border border-white/20">
-                  <span className="text-3xl font-bold text-white">156</span>
-                  <p className="text-gray-300 text-sm">Total Views</p>
-                </div>
-              </div> */}
             </div>
 
             {/* Cards Grid */}
@@ -186,7 +189,7 @@ export default function Dashboard() {
                 <Link
                   key={index}
                   to={card.to}
-                  className={`group relative overflow-hidden rounded-2xl transition-all duration-500 transform hover:scale-105`}
+                  className="group relative overflow-hidden rounded-2xl transition-all duration-500 transform hover:scale-105"
                   style={{
                     animationDelay: `${card.delay}ms`,
                     animation: isLoaded
@@ -194,31 +197,25 @@ export default function Dashboard() {
                       : "none",
                   }}
                 >
-                  {/* Card Background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20"></div>
 
-                  {/* Hover Gradient Overlay */}
                   <div
                     className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
                   ></div>
 
-                  {/* Animated Border */}
                   <div className="absolute inset-0 rounded-2xl">
                     <div
                       className={`absolute inset-[-2px] bg-gradient-to-r ${card.gradient} rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500`}
                     ></div>
                   </div>
 
-                  {/* Content */}
                   <div className="relative p-8 flex items-center space-x-6">
-                    {/* Icon Container */}
                     <div
                       className={`flex-shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br ${card.gradient} p-4 text-white shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:rotate-6`}
                     >
                       {card.icon}
                     </div>
 
-                    {/* Text Content */}
                     <div className="flex-1">
                       <h2 className="text-2xl font-bold text-white mb-1 group-hover:translate-x-2 transition-transform duration-300">
                         {card.title}
@@ -228,7 +225,6 @@ export default function Dashboard() {
                       </p>
                     </div>
 
-                    {/* Arrow Icon */}
                     <div className="flex-shrink-0">
                       <svg
                         className="w-6 h-6 text-gray-400 group-hover:text-white group-hover:translate-x-2 transition-all duration-300"
@@ -246,7 +242,6 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Shine Effect */}
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
                 </Link>
               ))}

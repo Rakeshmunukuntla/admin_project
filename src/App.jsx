@@ -7,6 +7,7 @@ import CreateJob from "./pages/CreateJob";
 import ManageJobs from "./pages/ManageJobs";
 import EditBlog from "./pages/EditBlog";
 import EditJob from "./pages/EditJob";
+import ManageJobApplications from "./pages/ManageJobApplicationsForAdmin";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/jobs" element={<ManageJobs />} />
         <Route path="/edit-blog/:id" element={<EditBlog />} />
         <Route path="/edit-job/:id" element={<EditJob />} />
+        <Route path="/job-applications" element={<ManageJobApplications />} />
       </Routes>
     </BrowserRouter>
   );
