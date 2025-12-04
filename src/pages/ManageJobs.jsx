@@ -28,80 +28,110 @@ export default function ManageJobs() {
     <>
       <Header />
 
+      {/* ------------------- SAME BACKGROUND AS DASHBOARD ------------------- */}
       <div
-        className="min-h-screen flex justify-center items-start py-16 px-4
-      bg-gradient-to-br from-blue-100 via-cyan-200 to-emerald-300"
+        className="min-h-screen p-8 relative overflow-hidden flex justify-center items-start"
+        style={{
+          backgroundImage:
+            "linear-gradient(0deg, transparent 24%, rgba(56,189,248,.18) 25%, rgba(56,189,248,.18) 26%, transparent 27%, transparent 74%, rgba(129,140,248,.16) 75%, rgba(129,140,248,.16) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(37,99,235,.18) 25%, rgba(37,99,235,.18) 26%, transparent 27%, transparent 74%, rgba(45,212,191,.16) 75%, rgba(45,212,191,.16) 76%, transparent 77%, transparent)",
+          backgroundSize: "80px 80px",
+          backgroundColor: "#020617",
+        }}
       >
-        <div
-          className="w-full max-w-6xl bg-white/30 backdrop-blur-xl 
-        border border-white/40 p-10 rounded-3xl shadow-2xl"
-        >
-          <h1 className="text-4xl font-extrabold text-neutral-900 mb-10 text-center drop-shadow-lg">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-sky-900/70"></div>
+
+        {/* MAIN CONTENT */}
+        <div className="relative z-10 w-full max-w-7xl p-6">
+          <h1 className="text-4xl font-extrabold text-white mb-10 text-center drop-shadow-xl">
             Manage Jobs
           </h1>
 
-          {/* Table Wrapper */}
-          <div className="overflow-x-auto rounded-2xl shadow-xl bg-white/80">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="bg-neutral-200/60 border-b text-neutral-800">
-                  <th className="p-4">Title</th>
-                  <th className="p-4">Category</th>
-                  <th className="p-4">Experience</th>
-                  <th className="p-4 w-48">Skills</th>
-                  <th className="p-4">Location</th>
-                  <th className="p-4">Type</th>
-                  <th className="p-4 text-center">Actions</th>
-                </tr>
-              </thead>
+          {/* ---------- ATTRACTIVE CARD GRID ---------- */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {jobs.map((job) => (
+              <div
+                key={job._id}
+                className="p-6 rounded-3xl shadow-2xl 
+                  bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 
+                  text-white border border-white/10 
+                  hover:scale-[1.02] transition-all duration-300 
+                  hover:shadow-cyan-500/20"
+              >
+                {/* TITLE */}
+                <h2
+                  className="text-2xl font-extrabold 
+                  bg-gradient-to-r from-cyan-400 to-blue-400 
+                  bg-clip-text text-transparent mb-2"
+                >
+                  {job.title}
+                </h2>
 
-              <tbody>
-                {jobs.map((job) => (
-                  <tr
-                    key={job._id}
-                    className="border-b hover:bg-neutral-100/60 transition"
+                {/* CATEGORY */}
+                <p
+                  className="text-sm bg-blue-600/20 text-blue-300 
+                    inline-block px-3 py-1 rounded-full font-semibold"
+                >
+                  {job.category}
+                </p>
+
+                {/* EXPERIENCE */}
+                <p className="mt-4 text-gray-300">
+                  <span className="font-semibold text-cyan-300">
+                    Experience:
+                  </span>{" "}
+                  {job.experience}
+                </p>
+
+                {/* LOCATION */}
+                <p className="mt-1 text-gray-300">
+                  <span className="font-semibold text-cyan-300">Location:</span>{" "}
+                  {job.location}{" "}
+                  <span className="text-purple-300">({job.locationType})</span>
+                </p>
+
+                {/* SKILLS */}
+                <div
+                  className="mt-4 bg-white/10 p-3 rounded-xl 
+                    border border-white/10 text-gray-200 text-sm shadow-inner"
+                >
+                  <strong className="text-cyan-300">Skills:</strong>
+                  <p className="mt-1">{job.skills?.join(", ")}</p>
+                </div>
+
+                {/* DESCRIPTION */}
+                <div
+                  className="mt-4 bg-white/5 p-3 rounded-xl 
+                    border border-white/10 text-gray-200 text-sm"
+                >
+                  <strong className="text-purple-300">Description:</strong>
+                  <p className="mt-1 leading-relaxed whitespace-pre-line">
+                    {job.description}
+                  </p>
+                </div>
+
+                {/* ACTION BUTTONS */}
+                <div className="mt-6 flex justify-between">
+                  <button
+                    onClick={() => navigate(`/edit-job/${job._id}`)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-xl 
+                      hover:bg-blue-700 transition-all shadow-lg 
+                      hover:shadow-blue-500/30"
                   >
-                    <td className="p-4 font-semibold text-neutral-900">
-                      {job.title}
-                    </td>
+                    Edit
+                  </button>
 
-                    <td className="p-4">{job.category}</td>
-
-                    <td className="p-4">{job.experience}</td>
-
-                    {/* Skills Box */}
-                    <td className="p-4">
-                      <div className="max-h-24 overflow-y-auto bg-neutral-100 p-2 rounded text-xs shadow-inner">
-                        {job.skills?.join(", ")}
-                      </div>
-                    </td>
-
-                    {/* New: Location field */}
-                    <td className="p-4">{job.location}</td>
-
-                    {/* New: Location Type */}
-                    <td className="p-4">{job.locationType}</td>
-
-                    {/* Buttons */}
-                    <td className="p-4 text-center space-x-3">
-                      <button
-                        onClick={() => navigate(`/edit-job/${job._id}`)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => deleteJob(job._id)}
-                        className="bg-red-600 text-white px-4 py-2 rounded-xl shadow hover:bg-red-700"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  <button
+                    onClick={() => deleteJob(job._id)}
+                    className="px-4 py-2 bg-red-600 text-white rounded-xl 
+                      hover:bg-red-700 transition-all shadow-lg 
+                      hover:shadow-red-500/30"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

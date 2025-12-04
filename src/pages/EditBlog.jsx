@@ -24,17 +24,14 @@ export default function EditBlog() {
   const [newBanner, setNewBanner] = useState(null);
   const [errors, setErrors] = useState({});
 
-  // const textOnlyRegex = /^[A-Za-z\s]*$/;
   const textOnlyRegex = /^[A-Za-z\s()\/-]*$/;
 
-  // Load blog data
   useEffect(() => {
     API.get(`/blogs/${id}`).then((res) => {
       setForm(res.data);
     });
   }, [id]);
 
-  // VALIDATION
   const validateForm = () => {
     let newErrors = {};
 
@@ -62,7 +59,6 @@ export default function EditBlog() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -79,9 +75,7 @@ export default function EditBlog() {
 
       showToast("Blog updated successfully!", "success");
 
-      setTimeout(() => {
-        navigate("/blogs");
-      }, 2000);
+      setTimeout(() => navigate("/blogs"), 2000);
     } catch (err) {
       showToast("Error updating blog", "error");
     }
@@ -91,47 +85,61 @@ export default function EditBlog() {
     <>
       <Header />
 
-      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-100 via-cyan-200 to-emerald-300 p-10">
-        <div className="max-w-3xl w-full bg-white/30 backdrop-blur-xl border border-white/40 p-10 rounded-3xl shadow-xl">
-          <h2 className="text-3xl font-bold mb-6 text-center text-neutral-900">
+      {/* ---------- Dashboard Background ---------- */}
+      <div
+        className="min-h-screen p-10 relative overflow-hidden flex justify-center items-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(0deg, transparent 24%, rgba(56,189,248,.18) 25%, rgba(56,189,248,.18) 26%, transparent 27%, transparent 74%, rgba(129,140,248,.16) 75%, rgba(129,140,248,.16) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(37,99,235,.18) 25%, rgba(37,99,235,.18) 26%, transparent 27%, transparent 74%, rgba(45,212,191,.16) 75%, rgba(45,212,191,.16) 76%, transparent 77%, transparent)",
+          backgroundSize: "80px 80px",
+          backgroundColor: "#020617",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-sky-900/70"></div>
+
+        {/* ---------- Form Card ---------- */}
+        <div className="relative z-10 max-w-3xl w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 rounded-3xl shadow-2xl border border-white/10">
+          <h2 className="text-4xl font-extrabold text-center mb-8 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
             Edit Blog
           </h2>
 
-          {/* CURRENT IMAGE PREVIEW */}
+          {/* Banner preview */}
           {form.banner && (
             <div className="mb-6">
-              <p className="text-gray-700 font-semibold mb-2">
-                🖼 Current Banner
-              </p>
+              <p className="text-cyan-300 font-semibold mb-2">Current Banner</p>
               <img
                 src={form.banner}
+                className="w-full h-64 object-cover rounded-xl shadow-2xl border border-white/20"
                 alt="Current Banner"
-                className="w-full h-64 object-cover rounded-xl shadow"
               />
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* NEW BANNER UPLOAD */}
             <div>
-              <label className="block mb-1 font-semibold text-neutral-800">
+              <label className="block mb-2 font-semibold text-cyan-300">
                 🖼 Upload New Banner
               </label>
+
               <input
                 type="file"
                 accept="image/*"
-                className="block w-full p-2 rounded-xl border bg-white/70 
-                  file:bg-purple-600 file:text-white file:px-4 file:py-2 
-                  file:mr-4 file:rounded-lg"
+                className="block w-full p-2 rounded-xl bg-white/80 text-black border border-white/30
+      file:bg-purple-600 file:text-white file:px-4 file:py-2 file:rounded-lg
+      hover:file:bg-purple-700 transition"
                 onChange={(e) => setNewBanner(e.target.files[0])}
               />
             </div>
 
             {/* CATEGORY */}
             <div>
-              <label className="block mb-1 font-semibold">📂 Category</label>
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Category
+              </label>
               <select
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
               >
@@ -143,114 +151,118 @@ export default function EditBlog() {
 
             {/* TITLE */}
             <div>
-              <label className="block mb-1 font-semibold">📝 Title</label>
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Title
+              </label>
               <input
-                placeholder="Enter blog title"
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
               />
               {errors.title && (
-                <p className="text-red-600 text-sm">{errors.title}</p>
+                <p className="text-red-400 text-sm">{errors.title}</p>
               )}
             </div>
 
             {/* SUMMARY */}
             <div>
-              <label className="block mb-1 font-semibold">🗒 Summary</label>
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Summary
+              </label>
               <textarea
                 rows={3}
-                placeholder="Short summary"
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.summary}
                 onChange={(e) => setForm({ ...form, summary: e.target.value })}
               />
               {errors.summary && (
-                <p className="text-red-600 text-sm">{errors.summary}</p>
+                <p className="text-red-400 text-sm">{errors.summary}</p>
               )}
             </div>
 
             {/* AUTHOR */}
             <div>
-              <label className="block mb-1 font-semibold">👤 Author</label>
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Author
+              </label>
               <input
-                placeholder="Author name"
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.author}
                 onChange={(e) => setForm({ ...form, author: e.target.value })}
               />
               {errors.author && (
-                <p className="text-red-600 text-sm">{errors.author}</p>
+                <p className="text-red-400 text-sm">{errors.author}</p>
               )}
             </div>
 
             {/* DESIGNATION */}
             <div>
-              <label className="block mb-1 font-semibold">
-                💼 Author Designation
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Designation
               </label>
               <input
-                placeholder="Example: Senior Developer"
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.designation}
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
               />
               {errors.designation && (
-                <p className="text-red-600 text-sm">{errors.designation}</p>
+                <p className="text-red-400 text-sm">{errors.designation}</p>
               )}
             </div>
 
             {/* DATE */}
             <div>
-              <label className="block mb-1 font-semibold">
-                📅 Published Date
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Published Date
               </label>
               <input
                 type="date"
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.publishedDate}
                 onChange={(e) =>
                   setForm({ ...form, publishedDate: e.target.value })
                 }
               />
               {errors.publishedDate && (
-                <p className="text-red-600 text-sm">{errors.publishedDate}</p>
+                <p className="text-red-400 text-sm">{errors.publishedDate}</p>
               )}
             </div>
 
             {/* READ TIME */}
             <div>
-              <label className="block mb-1 font-semibold">⏱ Read Time</label>
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Read Time
+              </label>
               <input
-                placeholder="Example: 5 min"
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.readTime}
                 onChange={(e) => setForm({ ...form, readTime: e.target.value })}
               />
               {errors.readTime && (
-                <p className="text-red-600 text-sm">{errors.readTime}</p>
+                <p className="text-red-400 text-sm">{errors.readTime}</p>
               )}
             </div>
 
             {/* CONTENT */}
             <div>
-              <label className="block mb-1 font-semibold">✍ Content</label>
+              <label className="block mb-1 font-semibold text-cyan-300">
+                Content
+              </label>
               <textarea
                 rows={6}
-                placeholder="Write your blog content..."
-                className="w-full p-3 border rounded-xl bg-white/70"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.content}
                 onChange={(e) => setForm({ ...form, content: e.target.value })}
               />
               {errors.content && (
-                <p className="text-red-600 text-sm">{errors.content}</p>
+                <p className="text-red-400 text-sm">{errors.content}</p>
               )}
             </div>
 
             {/* SUBMIT */}
-            <button className="w-full p-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-lg font-semibold shadow-lg">
+            <button className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-lg font-semibold shadow-xl">
               Update Blog
             </button>
           </form>

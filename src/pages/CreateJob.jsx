@@ -59,10 +59,8 @@ export default function CreateJob() {
     "User Research",
   ];
 
-  // const textOnlyRegex = /^[A-Za-z\s]*$/;
   const textOnlyRegex = /^[A-Za-z\s()\/-]*$/;
 
-  // VALIDATION
   const validateForm = () => {
     let newErrors = {};
 
@@ -106,12 +104,8 @@ export default function CreateJob() {
 
     try {
       await API.post("/jobs", form);
-
       showToast("Job created successfully!", "success");
-
-      setTimeout(() => {
-        navigate("/jobs");
-      }, 1800);
+      setTimeout(() => navigate("/jobs"), 1800);
     } catch (err) {
       showToast("Error creating job", "error");
     }
@@ -121,36 +115,51 @@ export default function CreateJob() {
     <>
       <Header />
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-cyan-200 to-emerald-300 p-6">
-        <div className="w-full max-w-3xl bg-white/30 backdrop-blur-xl border border-white/40 shadow-xl rounded-3xl p-10">
-          <h1 className="text-3xl font-bold text-center text-neutral-900 mb-8">
+      {/* ---------------- SAME BACKGROUND AS DASHBOARD ---------------- */}
+      <div
+        className="min-h-screen p-8 relative overflow-hidden flex items-center justify-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(0deg, transparent 24%, rgba(56,189,248,.18) 25%, rgba(56,189,248,.18) 26%, transparent 27%, transparent 74%, rgba(129,140,248,.16) 75%, rgba(129,140,248,.16) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(37,99,235,.18) 25%, rgba(37,99,235,.18) 26%, transparent 27%, transparent 74%, rgba(45,212,191,.16) 75%, rgba(45,212,191,.16) 76%, transparent 77%, transparent)",
+          backgroundSize: "80px 80px",
+          backgroundColor: "#020617",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-sky-900/70"></div>
+
+        {/* ---------------- FORM CARD ---------------- */}
+        <div className="relative z-10 w-full max-w-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 rounded-3xl shadow-2xl border border-white/10">
+          <h1
+            className="text-4xl font-extrabold text-center mb-8 
+            bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
+          >
             Create Job
           </h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Job Title */}
+          <form onSubmit={handleSubmit} className="space-y-6 text-white">
+            {/* Title */}
             <div>
-              <label className="block font-semibold mb-1 text-neutral-800">
+              <label className="block font-semibold mb-1 text-cyan-300">
                 🏷 Job Title
               </label>
               <input
                 placeholder="e.g., Project Manager"
-                className="w-full p-3 rounded-xl border border-white/40 bg-white/50 shadow-sm"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
               />
               {errors.title && (
-                <p className="text-red-600 text-sm mt-1">{errors.title}</p>
+                <p className="text-red-400 text-sm">{errors.title}</p>
               )}
             </div>
 
             {/* Category */}
             <div>
-              <label className="block font-semibold mb-1 text-neutral-800">
+              <label className="block font-semibold mb-1 text-cyan-300">
                 📂 Category
               </label>
               <select
-                className="w-full p-3 rounded-xl border border-white/40 bg-white/50 shadow-sm"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
               >
@@ -161,53 +170,52 @@ export default function CreateJob() {
                   </option>
                 ))}
               </select>
-
               {errors.category && (
-                <p className="text-red-600 text-sm mt-1">{errors.category}</p>
+                <p className="text-red-400 text-sm">{errors.category}</p>
               )}
             </div>
 
             {/* Experience */}
             <div>
-              <label className="block font-semibold mb-1 text-neutral-800">
+              <label className="block font-semibold mb-1 text-cyan-300">
                 🎯 Experience
               </label>
               <input
                 placeholder="e.g., 5+ years"
-                className="w-full p-3 rounded-xl border border-white/40 bg-white/50 shadow-sm"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.experience}
                 onChange={(e) =>
                   setForm({ ...form, experience: e.target.value })
                 }
               />
               {errors.experience && (
-                <p className="text-red-600 text-sm mt-1">{errors.experience}</p>
+                <p className="text-red-400 text-sm">{errors.experience}</p>
               )}
             </div>
 
-            {/* City Location */}
+            {/* Location */}
             <div>
-              <label className="block font-semibold mb-1 text-neutral-800">
+              <label className="block font-semibold mb-1 text-cyan-300">
                 📍 Job Location (City)
               </label>
               <input
                 placeholder="e.g., Hyderabad"
-                className="w-full p-3 rounded-xl border border-white/40 bg-white/50 shadow-sm"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
               />
               {errors.location && (
-                <p className="text-red-600 text-sm mt-1">{errors.location}</p>
+                <p className="text-red-400 text-sm">{errors.location}</p>
               )}
             </div>
 
             {/* Location Type */}
             <div>
-              <label className="block font-semibold mb-1 text-neutral-800">
+              <label className="block font-semibold mb-1 text-cyan-300">
                 🌍 Location Type
               </label>
               <select
-                className="w-full p-3 rounded-xl border border-white/40 bg-white/50 shadow-sm"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border"
                 value={form.locationType}
                 onChange={(e) =>
                   setForm({ ...form, locationType: e.target.value })
@@ -221,11 +229,11 @@ export default function CreateJob() {
 
             {/* Description */}
             <div>
-              <label className="block font-semibold mb-1 text-neutral-800">
+              <label className="block font-semibold mb-1 text-cyan-300">
                 📝 Job Description
               </label>
               <textarea
-                className="w-full p-3 rounded-xl border border-white/40 bg-white/50 shadow-sm h-32 resize-none"
+                className="w-full p-3 rounded-xl bg-white/80 text-black border h-32"
                 placeholder="Enter job description…"
                 value={form.description}
                 onChange={(e) =>
@@ -233,15 +241,13 @@ export default function CreateJob() {
                 }
               />
               {errors.description && (
-                <p className="text-red-600 text-sm mt-1">
-                  {errors.description}
-                </p>
+                <p className="text-red-400 text-sm">{errors.description}</p>
               )}
             </div>
 
             {/* Skills */}
             <div>
-              <p className="font-semibold mb-2 text-neutral-900">
+              <p className="font-semibold mb-2 text-cyan-300">
                 🧠 Skills Required:
               </p>
 
@@ -249,7 +255,7 @@ export default function CreateJob() {
                 {skillsList.map((skill) => (
                   <label
                     key={skill}
-                    className="flex items-center gap-2 bg-white/40 p-2 rounded-xl border border-white/50 cursor-pointer hover:bg-white/60"
+                    className="flex items-center gap-2 bg-white/40 p-2 rounded-xl border cursor-pointer hover:bg-white/60"
                   >
                     <input
                       type="checkbox"
@@ -257,18 +263,18 @@ export default function CreateJob() {
                       onChange={() => handleSkillToggle(skill)}
                       className="accent-cyan-500"
                     />
-                    <span className="text-neutral-800">{skill}</span>
+                    <span className="text-black">{skill}</span>
                   </label>
                 ))}
               </div>
 
               {errors.skills && (
-                <p className="text-red-600 text-sm mt-1">{errors.skills}</p>
+                <p className="text-red-400 text-sm">{errors.skills}</p>
               )}
             </div>
 
             {/* Submit */}
-            <button className="w-full py-3 bg-cyan-600 text-white rounded-xl font-semibold text-lg shadow-md hover:bg-cyan-700 transition-all hover:-translate-y-1">
+            <button className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-semibold text-lg shadow-lg">
               Create Job
             </button>
           </form>

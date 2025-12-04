@@ -28,91 +28,115 @@ export default function ManageBlogs() {
     <>
       <Header />
 
-      {/* Background and Center Layout */}
-      <div className="min-h-screen py-16 px-6 bg-gradient-to-br from-blue-100 via-cyan-200 to-green-200 flex justify-center">
-        <div className="w-full max-w-6xl">
-          {/* Page Title */}
-          <h1 className="text-4xl font-extrabold text-neutral-900 mb-10 text-center drop-shadow-md">
+      {/* ---------- SAME BACKGROUND AS DASHBOARD ---------- */}
+      <div
+        className="min-h-screen p-10 relative overflow-hidden flex justify-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(0deg, transparent 24%, rgba(56,189,248,.18) 25%, rgba(56,189,248,.18) 26%, transparent 27%, transparent 74%, rgba(129,140,248,.16) 75%, rgba(129,140,248,.16) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(37,99,235,.18) 25%, rgba(37,99,235,.18) 26%, transparent 27%, transparent 74%, rgba(45,212,191,.16) 75%, rgba(45,212,191,.16) 76%, transparent 77%, transparent)",
+          backgroundSize: "80px 80px",
+          backgroundColor: "#020617",
+        }}
+      >
+        {/* overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-sky-900/70"></div>
+
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-6xl">
+          <h1 className="text-4xl font-extrabold text-white mb-10 text-center drop-shadow-xl">
             Manage Blogs
           </h1>
 
-          {/* Glass Card Wrapper */}
-          <div className="bg-white/40 backdrop-blur-lg border border-white/50 rounded-3xl shadow-2xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-neutral-800">
-                <thead>
-                  <tr className="bg-white/70 border-b border-white text-neutral-700">
-                    <th className="p-4">Category</th>
-                    <th className="p-4">Title</th>
-                    <th className="p-4 w-64">Summary</th>
-                    <th className="p-4">Author</th>
-                    <th className="p-4">Designation</th>
-                    <th className="p-4">Published</th>
-                    <th className="p-4">Read Time</th>
-                    <th className="p-4">Banner</th>
-                    <th className="p-4 w-72">Content</th>
-                    <th className="p-4">Actions</th>
-                  </tr>
-                </thead>
+          {/* CARD LIST */}
+          <div className="space-y-10">
+            {blogs.map((blog) => (
+              <div
+                key={blog._id}
+                className="flex flex-col md:flex-row items-center gap-6 
+                  bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 
+                  p-6 rounded-3xl shadow-2xl border border-white/10 
+                  hover:scale-[1.01] transition-all duration-300"
+              >
+                {/* -------- LEFT CONTENT SECTION -------- */}
+                <div className="flex-1 text-white space-y-3">
+                  {/* Category */}
+                  <p className="inline-block px-3 py-1 rounded-full bg-blue-600/20 text-blue-300 text-sm font-semibold">
+                    {blog.category}
+                  </p>
 
-                <tbody>
-                  {blogs.map((blog) => (
-                    <tr
-                      key={blog._id}
-                      className="border-b border-white/50 hover:bg-white/50 transition"
+                  {/* Title */}
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                    {blog.title}
+                  </h2>
+
+                  {/* Summary */}
+                  <p className="text-gray-300 leading-relaxed">
+                    <span className="font-semibold text-cyan-300">
+                      Summary:
+                    </span>{" "}
+                    {blog.summary}
+                  </p>
+
+                  {/* Author */}
+                  <p className="text-gray-300">
+                    <span className="font-semibold text-purple-300">
+                      Author:
+                    </span>{" "}
+                    {blog.author} ({blog.designation})
+                  </p>
+
+                  {/* Published */}
+                  <p className="text-gray-300">
+                    <span className="font-semibold text-cyan-300">
+                      Published:
+                    </span>{" "}
+                    {blog.publishedDate}
+                  </p>
+
+                  {/* Read Time */}
+                  <p className="text-gray-300">
+                    <span className="font-semibold text-cyan-300">
+                      Read Time:
+                    </span>{" "}
+                    {blog.readTime}
+                  </p>
+
+                  {/* Content */}
+                  <div className="bg-white/10 p-3 rounded-xl border border-white/10 text-gray-100 text-sm shadow-inner">
+                    <strong className="text-purple-300">Content:</strong>
+                    <p className="mt-1 whitespace-pre-line leading-relaxed">
+                      {blog.content}
+                    </p>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex gap-4 mt-4">
+                    <button
+                      onClick={() => navigate(`/edit-blog/${blog._id}`)}
+                      className="px-4 py-2 bg-blue-600 rounded-xl text-white hover:bg-blue-700 transition shadow-lg hover:shadow-blue-500/30"
                     >
-                      <td className="p-4">{blog.category}</td>
-                      <td className="p-4 font-semibold">{blog.title}</td>
+                      Edit
+                    </button>
 
-                      {/* Summary Box */}
-                      <td className="p-4">
-                        <div className="max-h-24 overflow-y-auto bg-white/60 p-2 rounded-lg text-neutral-700 shadow-inner">
-                          {blog.summary}
-                        </div>
-                      </td>
+                    <button
+                      onClick={() => deleteBlog(blog._id)}
+                      className="px-4 py-2 bg-red-600 rounded-xl text-white hover:bg-red-700 transition shadow-lg hover:shadow-red-500/30"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
 
-                      <td className="p-4">{blog.author}</td>
-                      <td className="p-4">{blog.designation}</td>
-                      <td className="p-4">{blog.publishedDate}</td>
-                      <td className="p-4">{blog.readTime}</td>
-
-                      {/* Banner Image */}
-                      <td className="p-4">
-                        <img
-                          src={blog.banner}
-                          alt="banner"
-                          className="w-24 h-16 rounded-lg object-cover shadow"
-                        />
-                      </td>
-
-                      {/* Content box */}
-                      <td className="p-4">
-                        <div className="max-h-28 overflow-y-auto bg-white/60 p-2 rounded-lg text-neutral-700 shadow-inner">
-                          {blog.content}
-                        </div>
-                      </td>
-
-                      {/* Action Buttons */}
-                      <td className="p-4 space-y-2 flex flex-col">
-                        <button
-                          onClick={() => navigate(`/edit-blog/${blog._id}`)}
-                          className="bg-blue-600 text-white px-3 py-1 rounded-lg shadow hover:bg-blue-700 transition"
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          onClick={() => deleteBlog(blog._id)}
-                          className="bg-red-600 text-white px-3 py-1 rounded-lg shadow hover:bg-red-700 transition"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                {/* -------- RIGHT IMAGE SECTION -------- */}
+                <div className="w-full md:w-72 flex-shrink-0">
+                  <img
+                    src={blog.banner}
+                    alt="Blog Banner"
+                    className="w-full h-56 rounded-2xl object-cover shadow-2xl border border-white/20"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

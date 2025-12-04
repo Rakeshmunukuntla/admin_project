@@ -13,7 +13,7 @@ export default function ManageJobApplications() {
 
   const [resumeModal, setResumeModal] = useState(null); // stores resume URL
 
-  // UI‑only status map
+  // UI-only status map
   const [statusMap, setStatusMap] = useState({});
 
   useEffect(() => {
@@ -109,16 +109,20 @@ export default function ManageJobApplications() {
             {/* HEADER */}
             <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
-                <h1 className="text-4xl font-extrabold text-white">
+                <h1
+                  className="text-4xl font-extrabold 
+                  bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent"
+                >
                   Job Applications
                 </h1>
-                <p className="text-sky-200 mt-2">
+                <p className="text-sky-200 mt-2 text-lg">
                   Search, filter & manage candidate submissions.
                 </p>
               </div>
-              <div className="text-sky-100 text-sm">
+
+              <div className="text-sky-100 text-lg font-semibold">
                 Total:{" "}
-                <span className="font-semibold">
+                <span className="text-cyan-300 font-bold">
                   {filteredApps.length} application
                   {filteredApps.length !== 1 ? "s" : ""}
                 </span>
@@ -130,7 +134,8 @@ export default function ManageJobApplications() {
               <input
                 type="text"
                 placeholder="Search by name, email, job title..."
-                className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 text-white border border-sky-400/30 placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
+                className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 text-white border border-cyan-400/40
+                  placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -166,46 +171,68 @@ export default function ManageJobApplications() {
                     >
                       <div className="bg-gradient-to-r from-cyan-400/50 via-indigo-400/50 to-purple-400/50 p-[1px] rounded-2xl">
                         <div className="bg-slate-900/80 rounded-2xl p-6 backdrop-blur-xl shadow-lg border border-white/10">
+                          {/* Top Section */}
                           <div className="flex justify-between flex-wrap gap-2">
                             <div>
-                              <h2 className="text-2xl text-white font-bold">
+                              <h2
+                                className="text-3xl font-extrabold 
+                                bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent"
+                              >
                                 {app.jobTitle}
                               </h2>
-                              <p className="text-sky-200 mt-1">
+
+                              <p className="text-cyan-200 text-xl font-semibold mt-1">
                                 {app.firstName} {app.lastName}
                               </p>
                             </div>
 
                             <div className="flex flex-col items-end gap-2">
-                              {/* Status */}
                               <span
-                                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                className={`px-3 py-1 rounded-full text-sm font-bold tracking-wide ${
                                   currentStatus === "New"
-                                    ? "bg-blue-500/20 text-blue-200 border border-blue-400/40"
-                                    : "bg-emerald-500/20 text-emerald-200 border border-emerald-400/40"
+                                    ? "bg-blue-600/30 text-blue-200 border border-blue-400/40"
+                                    : "bg-emerald-600/30 text-emerald-200 border border-emerald-400/40"
                                 }`}
                               >
                                 {currentStatus}
                               </span>
 
-                              <span className="px-3 py-1 h-fit rounded-full text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                              <span
+                                className="px-3 py-1 rounded-full text-sm bg-cyan-600/20 
+                                text-cyan-200 border border-cyan-400/40 font-bold"
+                              >
                                 {new Date(app.createdAt).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sky-100 mt-4">
-                            <p>
-                              <b>Email:</b> {app.email}
+                          {/* DETAILS GRID */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sky-100 mt-4">
+                            <p className="text-lg">
+                              <span className="text-cyan-300 font-semibold">
+                                Email:
+                              </span>{" "}
+                              {app.email}
                             </p>
-                            <p>
-                              <b>Phone:</b> {app.phone}
+
+                            <p className="text-lg">
+                              <span className="text-cyan-300 font-semibold">
+                                Phone:
+                              </span>{" "}
+                              {app.phone}
                             </p>
-                            <p>
-                              <b>Qualification:</b> {app.qualification}
+
+                            <p className="text-lg">
+                              <span className="text-cyan-300 font-semibold">
+                                Qualification:
+                              </span>{" "}
+                              {app.qualification}
                             </p>
-                            <p>
-                              <b>Applied:</b>{" "}
+
+                            <p className="text-lg">
+                              <span className="text-cyan-300 font-semibold">
+                                Applied:
+                              </span>{" "}
                               {new Date(app.createdAt).toLocaleString()}
                             </p>
                           </div>
@@ -214,12 +241,12 @@ export default function ManageJobApplications() {
                           <div className="flex gap-3 mt-5 flex-wrap">
                             <button
                               onClick={() => setResumeModal(app.resumeUrl)}
-                              className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-900 font-semibold shadow hover:scale-105 transition"
+                              className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 
+                                text-slate-900 font-semibold shadow hover:scale-105 transition"
                             >
                               📄 View Resume
                             </button>
 
-                            {/* NEW: Open in new tab */}
                             <a
                               href={app.resumeUrl}
                               target="_blank"

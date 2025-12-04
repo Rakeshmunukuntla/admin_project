@@ -100,9 +100,9 @@ export default function Dashboard() {
       gradient: "from-orange-500 to-red-500",
       delay: "300",
     },
-    // 🆕 NEW CARD: Manage Job Applications
+    // 🆕 Manage Job Applications
     {
-      to: "/job-applications", // make sure you have a route for this
+      to: "/job-applications",
       icon: (
         <svg
           className="w-12 h-12"
@@ -129,41 +129,18 @@ export default function Dashboard() {
     <>
       <Header />
 
-      <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* Animated Background */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-500 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
-          <div
-            className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500 rounded-full filter blur-3xl opacity-20 animate-pulse"
-            style={{ animationDelay: "2s" }}
-          ></div>
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-500 rounded-full filter blur-3xl opacity-10 animate-pulse"
-            style={{ animationDelay: "4s" }}
-          ></div>
-
-          <div
-            className="absolute inset-0 opacity-5"
-            style={{
-              backgroundImage:
-                "linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)",
-              backgroundSize: "50px 50px",
-            }}
-          ></div>
-
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 bg-white/20 rounded-full animate-float"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDuration: `${15 + Math.random() * 10}s`,
-                animationDelay: `${Math.random() * 5}s`,
-              }}
-            ></div>
-          ))}
-        </div>
+      {/* SAME BACKGROUND AS APPLICATIONS PAGE */}
+      <div
+        className="min-h-screen p-8 relative overflow-hidden"
+        style={{
+          backgroundImage:
+            "linear-gradient(0deg, transparent 24%, rgba(56,189,248,.18) 25%, rgba(56,189,248,.18) 26%, transparent 27%, transparent 74%, rgba(129,140,248,.16) 75%, rgba(129,140,248,.16) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(37,99,235,.18) 25%, rgba(37,99,235,.18) 26%, transparent 27%, transparent 74%, rgba(45,212,191,.16) 75%, rgba(45,212,191,.16) 76%, transparent 77%, transparent)",
+          backgroundSize: "80px 80px",
+          backgroundColor: "#020617",
+        }}
+      >
+        {/* Overlay gradient like applications page */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-sky-900/70"></div>
 
         {/* Main Content */}
         <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
@@ -289,19 +266,6 @@ export default function Dashboard() {
           }
         }
 
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0) translateX(0);
-          }
-          33% {
-            transform: translateY(-30px) translateX(20px);
-          }
-          66% {
-            transform: translateY(30px) translateX(-20px);
-          }
-        }
-
         @keyframes gradient {
           0%,
           100% {
@@ -314,10 +278,6 @@ export default function Dashboard() {
 
         .animate-gradient {
           animation: gradient 3s ease-in-out infinite;
-        }
-
-        .animate-float {
-          animation: float 20s ease-in-out infinite;
         }
       `}</style>
 
