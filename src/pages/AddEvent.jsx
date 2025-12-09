@@ -19,6 +19,8 @@ export default function CreateEvent() {
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
 
+  const [showSuccess, setShowSuccess] = useState(false); // ✅ popup state
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -34,6 +36,7 @@ export default function CreateEvent() {
       formData.append("date", date);
       formData.append("organizers", organizers);
       formData.append("location", location);
+
       if (imageFile) {
         formData.append("banner", imageFile);
       }
@@ -49,8 +52,9 @@ export default function CreateEvent() {
       }
 
       setStatus("success");
+      setShowSuccess(true); // ✅ show popup
 
-      // reset
+      // reset fields
       setTitle("");
       setSubtitle("");
       setDescription("");
@@ -59,10 +63,11 @@ export default function CreateEvent() {
       setLocation("");
       setImageFile(null);
 
-      // redirect to manage events after short delay
+      // auto-close popup + redirect
       setTimeout(() => {
+        setShowSuccess(false);
         navigate("/events");
-      }, 1200);
+      }, 1800);
     } catch (err) {
       console.error(err);
       setStatus("error");
@@ -98,16 +103,10 @@ export default function CreateEvent() {
 
           {/* Card */}
           <div className="relative rounded-3xl border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] overflow-hidden">
-            {/* gradient aura */}
             <div className="absolute -inset-1 bg-gradient-to-r from-sky-500/40 via-purple-500/40 to-pink-500/40 opacity-60 blur-3xl pointer-events-none"></div>
 
             <div className="relative p-8 space-y-6">
-              {status === "success" && (
-                <div className="mb-4 rounded-2xl border border-emerald-400/40 bg-emerald-500/10 text-emerald-200 px-4 py-3 text-sm">
-                  ✅ Event created successfully! Redirecting to Manage Events…
-                </div>
-              )}
-
+              {/* Inline errors */}
               {status === "error" && (
                 <div className="mb-4 rounded-2xl border border-red-400/40 bg-red-500/10 text-red-200 px-4 py-3 text-sm">
                   ⚠ {errorMsg}
@@ -115,7 +114,7 @@ export default function CreateEvent() {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Row 1: title */}
+                {/* Title */}
                 <div>
                   <label className="block text-sm font-medium text-gray-200 mb-1">
                     Event Title *
@@ -126,7 +125,7 @@ export default function CreateEvent() {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                     placeholder="Annual Tech Innovation Summit 2025"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white"
                   />
                 </div>
 
@@ -140,7 +139,7 @@ export default function CreateEvent() {
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
                     placeholder="Shaping the future of AI, Cloud & Digital Experience"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white"
                   />
                 </div>
 
@@ -154,12 +153,12 @@ export default function CreateEvent() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
-                    placeholder="Write a compelling description of the event, agenda, audience, value, etc."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    placeholder="Write a compelling description of the event…"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white"
                   ></textarea>
                 </div>
 
-                {/* Date + Location */}
+                {/* Date & Location */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-200 mb-1">
@@ -171,7 +170,7 @@ export default function CreateEvent() {
                       onChange={(e) => setDate(e.target.value)}
                       required
                       placeholder="20 Dec 2025 • 10:00 AM IST"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white"
                     />
                   </div>
 
@@ -183,8 +182,8 @@ export default function CreateEvent() {
                       type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="CJSS HQ, Hyderabad / Virtual"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                      placeholder="CJSS HQ, Hyderabad • Virtual"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white"
                     />
                   </div>
                 </div>
@@ -198,29 +197,22 @@ export default function CreateEvent() {
                     type="text"
                     value={organizers}
                     onChange={(e) => setOrganizers(e.target.value)}
-                    placeholder="CJSS Technologies, SAP Practice, AEM Guild"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    placeholder="Team A, Team B, Partner X"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-white/20 text-white"
                   />
-                  <p className="mt-1 text-xs text-gray-400">
-                    Example:{" "}
-                    <span className="italic">Team A, Team B, Partner X</span>
-                  </p>
                 </div>
 
-                {/* Image */}
+                {/* Banner Image */}
                 <div>
                   <label className="block text-sm font-medium text-gray-200 mb-1">
-                    Banner Image (for homepage & event page)
+                    Banner Image
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => setImageFile(e.target.files[0] || null)}
-                    className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-500/80 file:text-slate-900 hover:file:bg-sky-400 cursor-pointer"
+                    className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-sky-500/80 file:text-slate-900 file:font-semibold"
                   />
-                  <p className="mt-1 text-xs text-gray-400">
-                    Recommended: 1920×1080 JPG / WEBP for hero banner.
-                  </p>
                 </div>
 
                 {/* Buttons */}
@@ -228,9 +220,9 @@ export default function CreateEvent() {
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="px-8 py-3 rounded-xl bg-gradient-to-r from-sky-400 via-purple-400 to-pink-400 text-slate-900 font-semibold shadow-lg hover:shadow-pink-500/40 hover:scale-105 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="px-8 py-3 rounded-xl bg-gradient-to-r from-sky-400 via-purple-400 to-pink-400 text-slate-900 font-semibold shadow-lg hover:scale-105 transition disabled:opacity-60"
                   >
-                    {status === "loading" ? "Creating event…" : "Create Event"}
+                    {status === "loading" ? "Creating…" : "Create Event"}
                   </button>
 
                   <button
@@ -247,7 +239,28 @@ export default function CreateEvent() {
         </div>
       </div>
 
+      {/* ✅ SUCCESS POPUP */}
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[999]">
+          <div className="bg-white text-slate-900 px-8 py-6 rounded-2xl shadow-2xl animate-pop">
+            <h2 className="text-2xl font-bold mb-2">🎉 Success!</h2>
+            <p className="text-md">Event created successfully</p>
+          </div>
+        </div>
+      )}
+
       <Footer />
+
+      {/* Popup Animation */}
+      <style>{`
+        @keyframes pop {
+          0% { transform: scale(0.7); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+          animation: pop 0.25s ease-out;
+        }
+      `}</style>
     </>
   );
 }

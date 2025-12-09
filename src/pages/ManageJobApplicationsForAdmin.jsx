@@ -11,17 +11,26 @@ export default function ManageJobApplications() {
   const [search, setSearch] = useState("");
   const [selectedJob, setSelectedJob] = useState("All");
 
-  const [resumeModal, setResumeModal] = useState(null); // stores resume URL
+  const [resumeModal, setResumeModal] = useState(null);
 
-  // UI-only status map
   const [statusMap, setStatusMap] = useState({});
+
+  // -------------------------------
+  // ⭐ POPUP STATES
+  // -------------------------------
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const res = await API.get(
-          "https://server-node-cjss.onrender.com/applications"
-        );
+        const res = await API.get("/applications");
 
         const apps = Array.isArray(res.data)
           ? res.data
@@ -61,29 +70,41 @@ export default function ManageJobApplications() {
   // 🟦 Unique job titles
   const jobTitles = ["All", ...new Set(applications.map((a) => a.jobTitle))];
 
-  // 🗑 Delete Application
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this application?"))
-      return;
+  // -------------------------------
+  // 🔥 OPEN DELETE POPUP
+  // -------------------------------
+  const openDeletePopup = (id) => {
+    setDeleteId(id);
+    setConfirmDelete(true);
+  };
 
+  // -------------------------------
+  // 🗑 DELETE CONFIRMED
+  // -------------------------------
+  const deleteApplication = async () => {
     try {
-      await API.delete(
-        `https://server-node-cjss.onrender.com/applications/${id}`
-      );
+      await API.delete(`/applications/${deleteId}`);
 
-      setApplications((prev) => prev.filter((app) => app._id !== id));
-      setFilteredApps((prev) => prev.filter((app) => app._id !== id));
+      setApplications((prev) => prev.filter((a) => a._id !== deleteId));
+      setFilteredApps((prev) => prev.filter((a) => a._id !== deleteId));
+
+      setSuccessMessage("Application deleted successfully!");
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 1500);
     } catch (err) {
-      console.error("Error deleting application:", err);
+      console.error(err);
+      setErrorMessage("Failed to delete application");
+      setShowError(true);
+      setTimeout(() => setShowError(false), 1500);
     }
+
+    setConfirmDelete(false);
+    setDeleteId(null);
   };
 
   // ⭐ Shortlist (UI only)
   const handleShortlist = (id) => {
-    setStatusMap((prev) => ({
-      ...prev,
-      [id]: "Shortlisted",
-    }));
+    setStatusMap((prev) => ({ ...prev, [id]: "Shortlisted" }));
   };
 
   return (
@@ -100,19 +121,15 @@ export default function ManageJobApplications() {
           backgroundColor: "#020617",
         }}
       >
-        {/* Overlay gradient */}
+        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-sky-900/70"></div>
 
-        {/* MAIN CONTAINER */}
         <div className="relative z-10 max-w-6xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] p-8 md:p-10">
-            {/* HEADER */}
+          {/* Header section */}
+          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-xl p-8 md:p-10">
             <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
-                <h1
-                  className="text-4xl font-extrabold 
-                  bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent"
-                >
+                <h1 className="text-4xl font-extrabold bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
                   Job Applications
                 </h1>
                 <p className="text-sky-200 mt-2 text-lg">
@@ -123,19 +140,17 @@ export default function ManageJobApplications() {
               <div className="text-sky-100 text-lg font-semibold">
                 Total:{" "}
                 <span className="text-cyan-300 font-bold">
-                  {filteredApps.length} application
-                  {filteredApps.length !== 1 ? "s" : ""}
+                  {filteredApps.length}
                 </span>
               </div>
             </div>
 
-            {/* 🔍 SEARCH + FILTER */}
+            {/* SEARCH + FILTER */}
             <div className="flex flex-wrap gap-4 mb-8">
               <input
                 type="text"
-                placeholder="Search by name, email, job title..."
-                className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 text-white border border-cyan-400/40
-                  placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
+                placeholder="Search..."
+                className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 text-white border border-cyan-400/40 placeholder-gray-400"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -145,15 +160,13 @@ export default function ManageJobApplications() {
                 value={selectedJob}
                 onChange={(e) => setSelectedJob(e.target.value)}
               >
-                {jobTitles.map((title, i) => (
-                  <option key={i} value={title}>
-                    {title}
-                  </option>
+                {jobTitles.map((title) => (
+                  <option key={title}>{title}</option>
                 ))}
               </select>
             </div>
 
-            {/* APPLICATION LIST */}
+            {/* LIST */}
             {loading ? (
               <p className="text-sky-100 text-lg">Loading...</p>
             ) : filteredApps.length === 0 ? (
@@ -170,74 +183,61 @@ export default function ManageJobApplications() {
                       style={{ animationDelay: `${index * 0.12}s` }}
                     >
                       <div className="bg-gradient-to-r from-cyan-400/50 via-indigo-400/50 to-purple-400/50 p-[1px] rounded-2xl">
-                        <div className="bg-slate-900/80 rounded-2xl p-6 backdrop-blur-xl shadow-lg border border-white/10">
-                          {/* Top Section */}
-                          <div className="flex justify-between flex-wrap gap-2">
+                        <div className="bg-slate-900/80 p-6 rounded-2xl shadow-lg border border-white/10">
+                          {/* Header Row */}
+                          <div className="flex justify-between flex-wrap">
                             <div>
-                              <h2
-                                className="text-3xl font-extrabold 
-                                bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent"
-                              >
+                              <h2 className="text-3xl font-extrabold bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
                                 {app.jobTitle}
                               </h2>
 
-                              <p className="text-cyan-200 text-xl font-semibold mt-1">
+                              <p className="text-cyan-200 text-xl mt-1">
                                 {app.firstName} {app.lastName}
                               </p>
                             </div>
 
-                            <div className="flex flex-col items-end gap-2">
+                            <div className="flex flex-col items-end">
                               <span
-                                className={`px-3 py-1 rounded-full text-sm font-bold tracking-wide ${
+                                className={`px-3 py-1 rounded-full text-sm font-bold ${
                                   currentStatus === "New"
-                                    ? "bg-blue-600/30 text-blue-200 border border-blue-400/40"
-                                    : "bg-emerald-600/30 text-emerald-200 border border-emerald-400/40"
+                                    ? "bg-blue-600/30 text-blue-200"
+                                    : "bg-emerald-600/30 text-emerald-200"
                                 }`}
                               >
                                 {currentStatus}
                               </span>
 
-                              <span
-                                className="px-3 py-1 rounded-full text-sm bg-cyan-600/20 
-                                text-cyan-200 border border-cyan-400/40 font-bold"
-                              >
+                              <span className="px-3 py-1 rounded-full text-sm bg-cyan-600/20 text-cyan-200 border border-cyan-400/40 font-bold mt-1">
                                 {new Date(app.createdAt).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
 
-                          {/* DETAILS GRID */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sky-100 mt-4">
-                            <p className="text-lg">
-                              <span className="text-cyan-300 font-semibold">
-                                Email:
-                              </span>{" "}
+                          {/* Details */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sky-100 mt-4">
+                            <p>
+                              <strong className="text-cyan-300">Email:</strong>{" "}
                               {app.email}
                             </p>
-
-                            <p className="text-lg">
-                              <span className="text-cyan-300 font-semibold">
-                                Phone:
-                              </span>{" "}
+                            <p>
+                              <strong className="text-cyan-300">Phone:</strong>{" "}
                               {app.phone}
                             </p>
-
-                            <p className="text-lg">
-                              <span className="text-cyan-300 font-semibold">
+                            <p>
+                              <strong className="text-cyan-300">
                                 Qualification:
-                              </span>{" "}
+                              </strong>{" "}
                               {app.qualification}
                             </p>
-
-                            <p className="text-lg">
-                              <span className="text-cyan-300 font-semibold">
+                            <p>
+                              <strong className="text-cyan-300">
                                 Applied:
-                              </span>{" "}
+                              </strong>{" "}
                               {new Date(app.createdAt).toLocaleString()}
                             </p>
                           </div>
 
-                          {/* ACTIONS */}
+                          {/* ACTION BUTTONS */}
                           <div className="flex gap-3 mt-5 flex-wrap">
                             <button
                               onClick={() => setResumeModal(app.resumeUrl)}
@@ -264,7 +264,7 @@ export default function ManageJobApplications() {
                             </button>
 
                             <button
-                              onClick={() => handleDelete(app._id)}
+                              onClick={() => openDeletePopup(app._id)}
                               className="px-4 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-500 transition"
                             >
                               🗑 Delete
@@ -280,11 +280,10 @@ export default function ManageJobApplications() {
           </div>
         </div>
 
-        {/* 🔵 RESUME MODAL POPUP */}
+        {/* RESUME MODAL */}
         {resumeModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[999]">
             <div className="bg-white rounded-2xl shadow-2xl p-4 w-[80%] h-[80%] relative flex flex-col">
-              {/* Close button */}
               <button
                 onClick={() => setResumeModal(null)}
                 className="absolute top-3 right-3 text-black text-xl font-bold hover:text-red-600"
@@ -292,7 +291,6 @@ export default function ManageJobApplications() {
                 ✖
               </button>
 
-              {/* Iframe */}
               <iframe
                 src={`${resumeModal}#toolbar=1&navpanes=0`}
                 className="w-full h-full rounded-lg border border-gray-300"
@@ -303,21 +301,61 @@ export default function ManageJobApplications() {
         )}
       </div>
 
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
+      {/* ------------------------- DELETE POPUP ------------------------- */}
+      {confirmDelete && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[999]">
+          <div className="bg-white rounded-2xl px-8 py-6 shadow-xl w-[360px] animate-pop text-center">
+            <h2 className="text-xl font-bold mb-2">Delete Application?</h2>
+            <p className="text-gray-600 mb-5">
+              Are you sure you want to remove this job application?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="flex-1 py-2 bg-gray-300 rounded-xl hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={deleteApplication}
+                className="flex-1 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS POPUP */}
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm z-[1000]">
+          <div className="bg-white px-8 py-6 rounded-2xl shadow-xl animate-pop">
+            <h2 className="text-2xl font-bold mb-1">🎉 Success!</h2>
+            <p>{successMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ERROR POPUP */}
+      {showError && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm z-[1000]">
+          <div className="bg-red-600 text-white px-8 py-6 rounded-2xl shadow-xl animate-pop">
+            <h2 className="text-xl font-bold mb-1">⚠ Error</h2>
+            <p>{errorMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ANIMATION */}
+      <style>{`
+        @keyframes pop {
+          0% { transform: scale(0.7); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
         }
-        .animate-slideUp {
-          animation: slideUp 0.6s ease-out forwards;
-        }
+        .animate-pop { animation: pop 0.25s ease-out; }
       `}</style>
 
       <Footer />

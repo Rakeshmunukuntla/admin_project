@@ -14,11 +14,12 @@ export default function EditEvent() {
   const [imagePreview, setImagePreview] = useState("");
   const [newImage, setNewImage] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false); // ✅ Popup state
 
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await API.get(`http://localhost:5000/events/${id}`);
+        const res = await API.get(`/events/${id}`);
         setEventData(res.data.event);
         setImagePreview(res.data.event.image);
       } catch (err) {
@@ -55,13 +56,17 @@ export default function EditEvent() {
 
       if (newImage) form.append("banner", newImage);
 
-      const res = await API.put(`http://localhost:5000/events/${id}`, form, {
+      const res = await API.put(`/events/${id}`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (res.data.success) {
-        alert("Event updated successfully!");
-        navigate("/events");
+        setShowSuccess(true); // ✅ Show popup
+
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigate("/events"); // Redirect after popup
+        }, 1800);
       }
     } catch (err) {
       console.error(err);
@@ -187,7 +192,28 @@ export default function EditEvent() {
         </div>
       </div>
 
+      {/* ✅ SUCCESS POPUP */}
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[999]">
+          <div className="bg-white text-slate-900 px-8 py-6 rounded-2xl shadow-2xl animate-pop">
+            <h2 className="text-2xl font-bold mb-2">🎉 Success!</h2>
+            <p className="text-md">Event updated successfully</p>
+          </div>
+        </div>
+      )}
+
       <Footer />
+
+      {/* Animation CSS */}
+      <style>{`
+        @keyframes pop {
+          0% { transform: scale(0.7); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+          animation: pop 0.25s ease-out;
+        }
+      `}</style>
     </>
   );
 }

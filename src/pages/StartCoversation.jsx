@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import API from "../api/axios"; // your axios instance (or replace with fetch)
+import API from "../api/axios";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -11,17 +11,25 @@ export default function StartConversation() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const perPage = 6;
-  const [sortOrder, setSortOrder] = useState("new"); // "new" | "old"
+  const [sortOrder, setSortOrder] = useState("new");
   const [expandedId, setExpandedId] = useState(null);
-  const [deletingId, setDeletingId] = useState(null);
 
-  // fetch conversations
+  // DELETE POPUP STATE
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  // SUCCESS POPUP
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // ERROR POPUP
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const fetchConversations = async () => {
-    setLoading(true);
     try {
-      const res = await API.get("/conversations"); // ensure baseURL is set in API or use full URL
-      const data =
-        res.data && res.data.conversations ? res.data.conversations : [];
+      const res = await API.get("/conversations");
+      const data = res.data?.conversations || [];
       setItems(data);
     } catch (err) {
       console.error("Error fetching conversations:", err);
@@ -34,24 +42,38 @@ export default function StartConversation() {
     fetchConversations();
   }, []);
 
-  // delete handler
-  const handleDelete = async (id) => {
-    const ok = confirm("Are you sure you want to delete this conversation?");
-    if (!ok) return;
-    try {
-      setDeletingId(id);
-      await API.delete(`/conversations/${id}`);
-      // optimistic UI: remove locally
-      setItems((prev) => prev.filter((i) => i._id !== id));
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert("Could not delete. Check console.");
-    } finally {
-      setDeletingId(null);
-    }
+  // open delete confirmation modal
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setConfirmDelete(true);
   };
 
-  // derived (search + sort)
+  // perform delete
+  const handleDelete = async () => {
+    try {
+      await API.delete(`/conversations/${deleteId}`);
+
+      // remove locally
+      setItems((prev) => prev.filter((i) => i._id !== deleteId));
+
+      // success popup
+      setSuccessMessage("Conversation deleted successfully!");
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 1500);
+    } catch (err) {
+      console.error("Delete failed:", err);
+
+      // error popup
+      setErrorMessage("Failed to delete conversation.");
+      setShowError(true);
+      setTimeout(() => setShowError(false), 2000);
+    }
+
+    setConfirmDelete(false);
+    setDeleteId(null);
+  };
+
+  // Filtering + Sorting
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     let list = items.filter((c) => {
@@ -61,11 +83,13 @@ export default function StartConversation() {
         (c.initiative || "").toLowerCase().includes(q)
       );
     });
+
     list.sort((a, b) => {
       const da = new Date(a.createdAt).getTime();
       const db = new Date(b.createdAt).getTime();
       return sortOrder === "new" ? db - da : da - db;
     });
+
     return list;
   }, [items, query, sortOrder]);
 
@@ -82,9 +106,11 @@ export default function StartConversation() {
 
   return (
     <>
-      <Header></Header>
+      <Header />
+
       <div className="min-h-screen p-8 bg-gradient-to-b from-slate-900 via-indigo-950 to-sky-900">
         <div className="max-w-6xl mx-auto relative z-10">
+          {/* Header */}
           <header className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300">
@@ -95,9 +121,9 @@ export default function StartConversation() {
               </p>
             </div>
 
+            {/* Search + Sort */}
             <div className="flex gap-3 items-center">
               <input
-                aria-label="Search conversations"
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -110,15 +136,12 @@ export default function StartConversation() {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-white/6 border border-white/12 text-white "
+                className="px-3 py-2 rounded-xl bg-white/6 border border-white/12 text-white"
               >
-                <option className="bg-black" value="new">
-                  Newest → Oldest
-                </option>
-                <option className="bg-black" value="old">
-                  Oldest → Newest
-                </option>
+                <option value="new">Newest → Oldest</option>
+                <option value="old">Oldest → Newest</option>
               </select>
+
               <div className="px-3 py-2 text-sm text-slate-300">
                 Total:{" "}
                 <span className="font-semibold text-white">
@@ -128,7 +151,7 @@ export default function StartConversation() {
             </div>
           </header>
 
-          {/* grid */}
+          {/* CONTENT */}
           {loading ? (
             <div className="p-8 rounded-2xl bg-white/6 border border-white/10 text-center text-slate-300">
               Loading…
@@ -142,24 +165,14 @@ export default function StartConversation() {
               <div className="grid gap-6 md:grid-cols-2">
                 {current.map((c) => {
                   const isExpanded = expandedId === c._id;
-                  // generate a couple of tags heuristics
-                  const tags = [
-                    c.status || "new",
-                    c.email && c.email.includes("@")
-                      ? "verified-email"
-                      : "no-email",
-                  ];
+
                   return (
                     <article
                       key={c._id}
-                      className="relative rounded-2xl p-5 border border-white/10 bg-gradient-to-br from-white/6 to-white/3 backdrop-blur-md shadow-lg transform transition duration-400 hover:-translate-y-1 hover:shadow-2xl"
-                      style={{
-                        // subtle glass gradient + inset glow
-                        boxShadow:
-                          "0 10px 30px rgba(2,6,23,0.6), inset 0 0 30px rgba(255,255,255,0.02)",
-                      }}
+                      className="relative rounded-2xl p-5 border border-white/10 bg-gradient-to-br from-white/6 to-white/3 backdrop-blur-md shadow-lg hover:-translate-y-1 hover:shadow-2xl transition duration-400"
                     >
                       <div className="flex items-start justify-between gap-4">
+                        {/* Info */}
                         <div>
                           <p className="text-sm font-semibold text-white">
                             {c.email}
@@ -168,112 +181,41 @@ export default function StartConversation() {
                             <span className="text-[11px] text-slate-300">
                               {formatDateTime(c.createdAt)}
                             </span>
-
-                            {/* status badge */}
-                            <span
-                              className={`text-[11px] px-2 py-1 rounded-full font-medium ${
-                                c.status === "closed"
-                                  ? "bg-emerald-500/20 text-emerald-200"
-                                  : c.status === "in_progress"
-                                  ? "bg-amber-500/20 text-amber-200"
-                                  : "bg-blue-500/20 text-blue-200"
-                              }`}
-                            >
-                              {c.status || "new"}
-                            </span>
-
-                            {/* unread badge */}
-                            {!c.read && (
-                              <span className="ml-1 inline-block px-2 py-0.5 bg-pink-500/20 text-pink-200 rounded-full text-[11px]">
-                                unread
-                              </span>
-                            )}
                           </div>
                         </div>
 
+                        {/* Actions */}
                         <div className="flex items-center gap-2">
-                          {/* expand */}
+                          {/* Expand */}
                           <button
                             onClick={() =>
                               setExpandedId(isExpanded ? null : c._id)
                             }
                             className="px-3 py-2 rounded-xl bg-white/6 text-white/90 hover:bg-white/8 border border-white/6"
-                            title="Expand / Collapse"
                           >
                             {isExpanded ? "Collapse" : "View"}
                           </button>
 
-                          {/* delete — premium gradient button */}
+                          {/* DELETE */}
                           <button
-                            onClick={() => handleDelete(c._id)}
-                            disabled={deletingId === c._id}
-                            className="ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-white"
+                            onClick={() => handleDeleteClick(c._id)}
+                            className="ml-2 px-3 py-2 rounded-xl font-semibold text-white"
                             style={{
                               background:
                                 "linear-gradient(90deg,#ff6b6b,#ff3d3d)",
                               boxShadow: "0 8px 20px rgba(255,61,61,0.18)",
-                              border: "1px solid rgba(255,255,255,0.06)",
                             }}
-                            title="Delete"
                           >
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              aria-hidden
-                            >
-                              <path
-                                d="M3 6h18"
-                                stroke="white"
-                                strokeWidth="1.6"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6"
-                                stroke="white"
-                                strokeWidth="1.6"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M10 11v6M14 11v6"
-                                stroke="white"
-                                strokeWidth="1.6"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            {deletingId === c._id ? "Deleting..." : "Delete"}
+                            Delete
                           </button>
                         </div>
                       </div>
 
-                      {/* initiative preview */}
-                      <div className="mt-4 text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
+                      <div className="mt-4 text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">
                         {isExpanded ? (
-                          <p>{c.initiative}</p>
+                          c.initiative
                         ) : (
                           <p className="line-clamp-3">{c.initiative}</p>
-                        )}
-                      </div>
-
-                      {/* tags row */}
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {tags.map((t, i) => (
-                          <span
-                            key={i}
-                            className="text-[11px] px-2 py-1 rounded-md bg-white/6 text-white/80 border border-white/6"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                        {/* example priority tag */}
-                        {c.initiative && c.initiative.length > 240 && (
-                          <span className="text-[11px] px-2 py-1 rounded-md bg-rose-600/20 text-rose-200 border border-rose-600/20">
-                            Long message
-                          </span>
                         )}
                       </div>
                     </article>
@@ -281,7 +223,7 @@ export default function StartConversation() {
                 })}
               </div>
 
-              {/* pagination */}
+              {/* PAGINATION */}
               <div className="mt-8 flex items-center justify-between">
                 <div className="text-slate-300">
                   Showing{" "}
@@ -301,18 +243,20 @@ export default function StartConversation() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="px-3 py-2 rounded-xl bg-white/6 text-white/90"
                     disabled={page === 1}
+                    className="px-3 py-2 rounded-xl bg-white/6 text-white/90"
                   >
                     Prev
                   </button>
+
                   <div className="px-3 py-2 text-white/90 rounded-xl bg-white/6">
                     {page}
                   </div>
+
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="px-3 py-2 rounded-xl bg-white/6 text-white/90"
                     disabled={page >= totalPages}
+                    className="px-3 py-2 rounded-xl bg-white/6 text-white/90"
                   >
                     Next
                   </button>
@@ -322,7 +266,67 @@ export default function StartConversation() {
           )}
         </div>
       </div>
-      <Footer></Footer>
+
+      {/* 🟡 DELETE CONFIRMATION POPUP */}
+      {confirmDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[999]">
+          <div className="bg-white text-slate-900 px-8 py-6 w-[360px] rounded-2xl shadow-2xl animate-pop text-center">
+            <h2 className="text-xl font-bold mb-2">Delete Conversation?</h2>
+            <p className="text-sm text-gray-600 mb-5">
+              Are you sure you want to delete this conversation?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="flex-1 py-2 rounded-xl bg-gray-300 text-gray-900 font-semibold hover:bg-gray-200 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="flex-1 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🟢 SUCCESS POPUP */}
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[1000]">
+          <div className="bg-white text-slate-900 px-8 py-6 rounded-2xl shadow-2xl animate-pop">
+            <h2 className="text-2xl font-bold mb-2">🎉 Success!</h2>
+            <p className="text-md">{successMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* 🔴 ERROR POPUP */}
+      {showError && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[1000]">
+          <div className="bg-red-600 text-white px-8 py-6 rounded-2xl shadow-2xl animate-pop">
+            <h2 className="text-2xl font-bold mb-2">⚠ Error</h2>
+            <p className="text-md">{errorMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Animations */}
+      <style>{`
+        @keyframes pop {
+          0% { transform: scale(0.7); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+          animation: pop .25s ease-out;
+        }
+      `}</style>
+
+      <Footer />
     </>
   );
 }

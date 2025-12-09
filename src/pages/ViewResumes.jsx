@@ -297,9 +297,7 @@ export default function ViewResumes() {
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const res = await API.get(
-          "https://server-node-cjss.onrender.com/resumes"
-        );
+        const res = await API.get("/resumes");
 
         const data = Array.isArray(res.data)
           ? res.data

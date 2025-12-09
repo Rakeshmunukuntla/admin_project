@@ -11,10 +11,22 @@ export default function ViewContacts() {
 
   const [expandedId, setExpandedId] = useState(null);
 
+  // 🟡 DELETE CONFIRM POPUP
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  // 🟢 SUCCESS POPUP
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // 🔴 ERROR POPUP
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await API.get("http://localhost:5000/contact");
+        const res = await API.get("/contact");
         setContacts(res.data.contacts || []);
       } catch (err) {
         console.error("Error fetching contacts:", err);
@@ -26,15 +38,30 @@ export default function ViewContacts() {
     fetchContacts();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this contact message?")) return;
+  const handleDeleteConfirm = (id) => {
+    setDeleteId(id);
+    setConfirmDelete(true);
+  };
 
+  const deleteContact = async () => {
     try {
-      await API.delete(`http://localhost:5000/contact/${id}`);
-      setContacts((prev) => prev.filter((c) => c._id !== id));
+      await API.delete(`/contact/${deleteId}`);
+
+      setContacts((prev) => prev.filter((c) => c._id !== deleteId));
+
+      setSuccessMessage("Contact message deleted.");
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 1500);
     } catch (err) {
       console.error("Delete error:", err);
+
+      setErrorMessage("Failed to delete message");
+      setShowError(true);
+      setTimeout(() => setShowError(false), 2000);
     }
+
+    setConfirmDelete(false);
+    setDeleteId(null);
   };
 
   const formatDate = (d) =>
@@ -128,23 +155,22 @@ export default function ViewContacts() {
                           </div>
 
                           <button
-                            onClick={() => handleDelete(c._id)}
+                            onClick={() => handleDeleteConfirm(c._id)}
                             className="bg-red-500/20 hover:bg-red-500/40 text-red-300 text-xs px-3 py-1 rounded-full shadow transition"
                           >
                             Delete
                           </button>
                         </div>
 
-                        {/* Created Date */}
                         <p className="text-gray-300 text-xs mb-3">
                           {formatDate(c.createdAt)}
                         </p>
 
-                        {/* Message */}
                         <p className="text-gray-100 text-sm break-words whitespace-pre-wrap">
                           {expandedId === c._id
                             ? c.message
                             : c.message.slice(0, 100)}
+
                           {c.message.length > 100 && (
                             <button
                               onClick={() =>
@@ -168,21 +194,67 @@ export default function ViewContacts() {
         </div>
       </div>
 
+      {/* DELETE CONFIRM POPUP */}
+      {confirmDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[999]">
+          <div className="bg-white text-slate-900 px-8 py-6 w-[350px] rounded-2xl shadow-2xl animate-pop text-center">
+            <h2 className="text-xl font-bold mb-2">Delete Message?</h2>
+            <p className="text-sm text-gray-600 mb-5">
+              Are you sure you want to delete this message?
+            </p>
+
+            <div className="flex justify-between gap-3">
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="flex-1 px-4 py-2 rounded-xl bg-gray-300 text-gray-900 font-semibold hover:bg-gray-200 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={deleteContact}
+                className="flex-1 px-4 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS POPUP */}
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[999]">
+          <div className="bg-white text-slate-900 px-8 py-6 rounded-2xl shadow-2xl animate-pop">
+            <h2 className="text-2xl font-bold mb-2">🎉 Success!</h2>
+            <p className="text-md">{successMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ERROR POPUP */}
+      {showError && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[999]">
+          <div className="bg-red-600 text-white px-8 py-6 rounded-2xl shadow-2xl animate-pop">
+            <h2 className="text-2xl font-bold mb-2">⚠ Error</h2>
+            <p className="text-md">{errorMessage}</p>
+          </div>
+        </div>
+      )}
+
       {/* Animations */}
       <style>{`
         @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.96);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
+          from { opacity: 0; transform: translateY(20px) scale(0.96); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .animate-slideUp {
-          animation: slideUp .6s ease-out forwards;
+        .animate-slideUp { animation: slideUp .6s ease-out forwards; }
+
+        @keyframes pop {
+          0% { transform: scale(0.7); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
         }
+        .animate-pop { animation: pop 0.25s ease-out; }
       `}</style>
 
       <Footer />
