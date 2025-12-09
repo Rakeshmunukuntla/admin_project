@@ -34,6 +34,7 @@ export default function Dashboard() {
       gradient: "from-blue-500 to-cyan-500",
       delay: "0",
     },
+
     {
       to: "/blogs",
       icon: (
@@ -56,6 +57,7 @@ export default function Dashboard() {
       gradient: "from-purple-500 to-pink-500",
       delay: "100",
     },
+
     {
       to: "/create-job",
       icon: (
@@ -78,6 +80,7 @@ export default function Dashboard() {
       gradient: "from-green-500 to-emerald-500",
       delay: "200",
     },
+
     {
       to: "/jobs",
       icon: (
@@ -100,7 +103,7 @@ export default function Dashboard() {
       gradient: "from-orange-500 to-red-500",
       delay: "300",
     },
-    // 🆕 Manage Job Applications
+
     {
       to: "/job-applications",
       icon: (
@@ -118,10 +121,156 @@ export default function Dashboard() {
           />
         </svg>
       ),
-      title: "Manage Job Applications",
-      description: "Review and track candidate applications",
+      title: "Manage Applications",
+      description: "Review candidate applications",
       gradient: "from-teal-500 to-indigo-500",
       delay: "400",
+    },
+
+    {
+      to: "/view-resumes",
+      icon: (
+        <svg
+          className="w-12 h-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
+        </svg>
+      ),
+      title: "View Resumes",
+      description: "Browse uploaded resumes",
+      gradient: "from-sky-500 to-cyan-500",
+      delay: "500",
+    },
+
+    {
+      to: "/start-conversation",
+      icon: (
+        <svg
+          className="w-12 h-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M8 10h8M8 14h5M5 20l2-3h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v13z"
+          />
+        </svg>
+      ),
+      title: "Start Conversation",
+      description: "View contact submissions",
+      gradient: "from-indigo-500 to-fuchsia-500",
+      delay: "600",
+    },
+
+    {
+      to: "/ready-to-get-started",
+      icon: (
+        <svg
+          className="w-12 h-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
+        </svg>
+      ),
+      title: "Ready to Get Started",
+      description: "Configure hiring workflow",
+      gradient: "from-emerald-500 to-lime-400",
+      delay: "700",
+    },
+
+    // ⭐ NEW: CREATE EVENT
+    {
+      to: "/create-event",
+      icon: (
+        <svg
+          className="w-12 h-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+      ),
+      title: "Create Event",
+      description: "Post a new event",
+      gradient: "from-yellow-400 to-orange-500",
+      delay: "800",
+    },
+
+    // ⭐ NEW: MANAGE EVENTS
+    {
+      to: "/events",
+      icon: (
+        <svg
+          className="w-12 h-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M3 7h18M3 12h18M3 17h18"
+          />
+        </svg>
+      ),
+      title: "Manage Events",
+      description: "Edit or delete events",
+      gradient: "from-pink-500 to-red-400",
+      delay: "900",
+    },
+    // ⭐ NEW: EVENT REGISTRATIONS
+    {
+      to: "/event-registrations",
+      icon: (
+        <svg
+          className="w-12 h-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm3 9h8m-8 4h5m-5-8h.01M9 16h.01"
+          />
+        </svg>
+      ),
+      title: "Event Registrations",
+      description: "View all event attendees",
+      gradient: "from-indigo-400 to-purple-500",
+      delay: "1000",
     },
   ];
 
@@ -129,20 +278,17 @@ export default function Dashboard() {
     <>
       <Header />
 
-      {/* SAME BACKGROUND AS APPLICATIONS PAGE */}
       <div
         className="min-h-screen p-8 relative overflow-hidden"
         style={{
           backgroundImage:
-            "linear-gradient(0deg, transparent 24%, rgba(56,189,248,.18) 25%, rgba(56,189,248,.18) 26%, transparent 27%, transparent 74%, rgba(129,140,248,.16) 75%, rgba(129,140,248,.16) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(37,99,235,.18) 25%, rgba(37,99,235,.18) 26%, transparent 27%, transparent 74%, rgba(45,212,191,.16) 75%, rgba(45,212,191,.16) 76%, transparent 77%, transparent)",
+            "linear-gradient(0deg, transparent 24%, rgba(56,189,248,.18) 25%, rgba(56,189,248,.18) 26%, transparent 27%,transparent 74%, rgba(129,140,248,.16) 75%,rgba(129,140,248,.16) 76%,transparent 77%,transparent), linear-gradient(90deg, transparent 24%, rgba(37,99,235,.18) 25%,rgba(37,99,235,.18) 26%,transparent 27%,transparent 74%, rgba(45,212,191,.16) 75%,rgba(45,212,191,.16) 76%,transparent 77%,transparent)",
           backgroundSize: "80px 80px",
           backgroundColor: "#020617",
         }}
       >
-        {/* Overlay gradient like applications page */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-sky-900/70"></div>
 
-        {/* Main Content */}
         <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
           <div
             className={`max-w-6xl w-full transition-all duration-1000 ${
@@ -224,31 +370,29 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* Quick Actions */}
+            {/* Logout */}
             <div className="mt-12 text-center">
-              <div className="inline-flex gap-4">
-                <button
-                  onClick={() => navigate("/")}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-pink-500/25"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    Logout
-                  </span>
-                </button>
-              </div>
+              <button
+                onClick={() => navigate("/")}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-pink-500/25"
+              >
+                <span className="flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  Logout
+                </span>
+              </button>
             </div>
           </div>
         </div>

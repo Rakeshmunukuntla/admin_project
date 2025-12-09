@@ -8,6 +8,13 @@ import ManageJobs from "./pages/ManageJobs";
 import EditBlog from "./pages/EditBlog";
 import EditJob from "./pages/EditJob";
 import ManageJobApplications from "./pages/ManageJobApplicationsForAdmin";
+import ViewResumes from "./pages/ViewResumes";
+import StartCoversation from "./pages/StartCoversation";
+import Ready from "./pages/ReadyToGetStarted";
+import AddEvent from "./pages/AddEvent";
+import EventMange from "./pages/ManageEvents";
+import EditEvent from "./pages/EditEvent";
+import EventRegistrations from "./pages/event-registrations";
 
 function App() {
   return (
@@ -23,6 +30,19 @@ function App() {
         <Route path="/edit-blog/:id" element={<EditBlog />} />
         <Route path="/edit-job/:id" element={<EditJob />} />
         <Route path="/job-applications" element={<ManageJobApplications />} />
+        <Route path="/view-resumes" element={<ViewResumes />}></Route>
+        <Route
+          path="/start-conversation"
+          element={<StartCoversation />}
+        ></Route>
+        <Route path="/ready-to-get-started" element={<Ready></Ready>}></Route>
+        <Route path="/create-event" element={<AddEvent></AddEvent>}></Route>
+        <Route path="/events" element={<EventMange></EventMange>}></Route>
+        <Route path="/events/:id" element={<EditEvent></EditEvent>}></Route>
+        <Route
+          path="/event-registrations"
+          element={<EventRegistrations></EventRegistrations>}
+        ></Route>
       </Routes>
     </BrowserRouter>
   );
